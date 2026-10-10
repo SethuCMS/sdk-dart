@@ -19,23 +19,30 @@ class SethuClient {
     bool allowInsecureHttp = false,
     Future<void> Function(Duration)? sleep,
   }) : _http = ApiHttp(
-          baseUrl,
-          token: token,
-          client: httpClient,
-          timeout: timeout,
-          maxRetries: maxRetries,
-          allowInsecureHttp: allowInsecureHttp,
-          sleep: sleep,
-        );
+         baseUrl,
+         token: token,
+         client: httpClient,
+         timeout: timeout,
+         maxRetries: maxRetries,
+         allowInsecureHttp: allowInsecureHttp,
+         sleep: sleep,
+       );
 
   final ApiHttp _http;
 
-  Collection collection(String connectionId, String name) => Collection(_http, connectionId, name);
+  Collection collection(String connectionId, String name) =>
+      Collection(_http, connectionId, name);
 
-  Future<List<Map<String, Object?>>> connections() async => _list(await _http.request('GET', '/v1/connections'));
+  Future<List<Map<String, Object?>>> connections() async =>
+      _list(await _http.request('GET', '/v1/connections'));
 
   Future<List<Map<String, Object?>>> collections(String connectionId) async =>
-      _list(await _http.request('GET', '/v1/connections/${Uri.encodeComponent(connectionId)}/collections'));
+      _list(
+        await _http.request(
+          'GET',
+          '/v1/connections/${Uri.encodeComponent(connectionId)}/collections',
+        ),
+      );
 
   /// True when the gateway reports that it is ready. Never throws.
   Future<bool> isHealthy() async {
@@ -52,6 +59,8 @@ class SethuClient {
 
   List<Map<String, Object?>> _list(Object? body) {
     final data = body is Map<String, Object?> ? body['data'] : null;
-    return data is List ? data.whereType<Map<String, Object?>>().toList() : <Map<String, Object?>>[];
+    return data is List
+        ? data.whereType<Map<String, Object?>>().toList()
+        : <Map<String, Object?>>[];
   }
 }
