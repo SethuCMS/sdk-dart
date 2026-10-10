@@ -19,14 +19,14 @@ class SethuClient {
     bool allowInsecureHttp = false,
     Future<void> Function(Duration)? sleep,
   }) : _http = ApiHttp(
-         baseUrl,
-         token: token,
-         client: httpClient,
-         timeout: timeout,
-         maxRetries: maxRetries,
-         allowInsecureHttp: allowInsecureHttp,
-         sleep: sleep,
-       );
+          baseUrl,
+          token: token,
+          client: httpClient,
+          timeout: timeout,
+          maxRetries: maxRetries,
+          allowInsecureHttp: allowInsecureHttp,
+          sleep: sleep,
+        );
 
   final ApiHttp _http;
 

@@ -3,10 +3,10 @@
 typedef Filter = Map<String, Object?>;
 
 Filter _compare(String field, String op, Object? value) => {
-  'field': field,
-  'op': op,
-  'value': value,
-};
+      'field': field,
+      'op': op,
+      'value': value,
+    };
 
 Filter eq(String field, Object? value) => _compare(field, 'eq', value);
 Filter ne(String field, Object? value) => _compare(field, 'ne', value);

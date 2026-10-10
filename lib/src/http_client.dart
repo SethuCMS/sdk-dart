@@ -49,12 +49,12 @@ class ApiHttp {
     this.maxRetries = 2,
     bool allowInsecureHttp = false,
     Future<void> Function(Duration)? sleep,
-  }) : baseUrl = normalizeBaseUrl(
-         baseUrl,
-         allowInsecureHttp: allowInsecureHttp,
-       ),
-       _client = client ?? http.Client(),
-       _sleep = sleep ?? ((Duration d) => Future<void>.delayed(d));
+  })  : baseUrl = normalizeBaseUrl(
+          baseUrl,
+          allowInsecureHttp: allowInsecureHttp,
+        ),
+        _client = client ?? http.Client(),
+        _sleep = sleep ?? ((Duration d) => Future<void>.delayed(d));
 
   final String baseUrl;
   final TokenSource? token;
@@ -74,7 +74,7 @@ class ApiHttp {
   }) async {
     // Only reads are retried. A retried write could happen twice.
     final attempts = method == 'GET' ? maxRetries + 1 : 1;
-    for (var attempt = 1; ; attempt++) {
+    for (var attempt = 1;; attempt++) {
       try {
         return await _send(method, path, query, body, idempotencyKey);
       } on SethuApiError catch (error) {
@@ -112,8 +112,9 @@ class ApiHttp {
       request.headers['Content-Type'] = 'application/json';
       request.body = jsonEncode(body);
     }
-    if (idempotencyKey != null)
+    if (idempotencyKey != null) {
       request.headers['Idempotency-Key'] = idempotencyKey;
+    }
 
     final http.Response response;
     try {
@@ -160,10 +161,11 @@ class ApiHttp {
 
   Duration _backoff(int attempt, SethuApiError error) {
     final hinted = error.retryAfter;
-    if (hinted != null)
+    if (hinted != null) {
       return hinted > const Duration(seconds: 10)
           ? const Duration(seconds: 10)
           : hinted;
+    }
     final base = min(200 * pow(2, attempt - 1).toInt(), 5000);
     return Duration(
       milliseconds: (base * (0.5 + _random.nextDouble() / 2)).round(),

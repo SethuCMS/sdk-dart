@@ -30,8 +30,8 @@ String _enc(Object value) => Uri.encodeComponent(value.toString());
 /// One collection of one connection. Create it with `client.collection(connectionId, name)`.
 class Collection {
   Collection(this._http, String connectionId, String name)
-    : _base =
-          '/v1/connections/${_enc(connectionId)}/collections/${_enc(name)}/records';
+      : _base =
+            '/v1/connections/${_enc(connectionId)}/collections/${_enc(name)}/records';
 
   final ApiHttp _http;
   final String _base;
@@ -48,27 +48,29 @@ class Collection {
   Future<RecordData> create(
     RecordData values, {
     String? idempotencyKey,
-  }) async => _record(
-    await _http.request(
-      'POST',
-      _base,
-      body: values,
-      idempotencyKey: idempotencyKey ?? _newKey(),
-    ),
-  );
+  }) async =>
+      _record(
+        await _http.request(
+          'POST',
+          _base,
+          body: values,
+          idempotencyKey: idempotencyKey ?? _newKey(),
+        ),
+      );
 
   Future<RecordData> update(
     Object id,
     RecordData values, {
     String? idempotencyKey,
-  }) async => _record(
-    await _http.request(
-      'PATCH',
-      '$_base/${_enc(id)}',
-      body: values,
-      idempotencyKey: idempotencyKey ?? _newKey(),
-    ),
-  );
+  }) async =>
+      _record(
+        await _http.request(
+          'PATCH',
+          '$_base/${_enc(id)}',
+          body: values,
+          idempotencyKey: idempotencyKey ?? _newKey(),
+        ),
+      );
 
   Future<void> delete(Object id, {String? idempotencyKey}) async {
     await _http.request(
@@ -90,8 +92,8 @@ class Collection {
         'sort': state.sorts.isEmpty
             ? null
             : state.sorts
-                  .map((s) => s.descending ? '-${s.field}' : s.field)
-                  .join(','),
+                .map((s) => s.descending ? '-${s.field}' : s.field)
+                .join(','),
         'fields': state.fields.isEmpty ? null : state.fields.join(','),
         'limit': state.limit?.toString(),
         'cursor': state.cursor,
@@ -151,13 +153,14 @@ class _State {
     int? limit,
     String? cursor,
     bool clearCursor = false,
-  }) => _State(
-    filters: filters ?? this.filters,
-    sorts: sorts ?? this.sorts,
-    fields: fields ?? this.fields,
-    limit: limit ?? this.limit,
-    cursor: clearCursor ? null : (cursor ?? this.cursor),
-  );
+  }) =>
+      _State(
+        filters: filters ?? this.filters,
+        sorts: sorts ?? this.sorts,
+        fields: fields ?? this.fields,
+        limit: limit ?? this.limit,
+        cursor: clearCursor ? null : (cursor ?? this.cursor),
+      );
 }
 
 /// A query under construction. Every method returns a new builder, so builders can be reused safely.
@@ -169,9 +172,9 @@ class QueryBuilder {
 
   /// Adds a filter. Calling this more than once means "all of these must match".
   QueryBuilder where(Filter filter) => QueryBuilder._(
-    _collection,
-    _state.copy(filters: [..._state.filters, filter]),
-  );
+        _collection,
+        _state.copy(filters: [..._state.filters, filter]),
+      );
 
   QueryBuilder orderBy(String field, {bool descending = false}) =>
       QueryBuilder._(
@@ -181,21 +184,22 @@ class QueryBuilder {
 
   /// Return only these fields.
   QueryBuilder select(List<String> fields) => QueryBuilder._(
-    _collection,
-    _state.copy(fields: [..._state.fields, ...fields]),
-  );
+        _collection,
+        _state.copy(fields: [..._state.fields, ...fields]),
+      );
 
   QueryBuilder limit(int count) {
-    if (count < 1)
+    if (count < 1) {
       throw RangeError('limit must be a whole number of at least 1');
+    }
     return QueryBuilder._(_collection, _state.copy(limit: count));
   }
 
   /// Continue after a previous page.
   QueryBuilder after(String? cursor) => QueryBuilder._(
-    _collection,
-    _state.copy(cursor: cursor, clearCursor: cursor == null),
-  );
+        _collection,
+        _state.copy(cursor: cursor, clearCursor: cursor == null),
+      );
 
   /// Fetches one page.
   Future<ListResult> list() => _collection._runList(_state);

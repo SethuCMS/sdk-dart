@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:sethucms/sethucms.dart';
+// The SDK's `contains` filter would clash with the matcher of the same name.
+import 'package:sethucms/sethucms.dart' hide contains;
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:test/test.dart';
@@ -23,54 +24,57 @@ class Script {
   final List<Seen> seen = [];
 
   http.Client client() => MockClient((request) async {
-    seen.add(
-      Seen(
-        request.method,
-        request.url,
-        request.headers,
-        request.body.isEmpty ? null : jsonDecode(request.body),
-      ),
-    );
-    if (answers.isEmpty) throw StateError('no scripted answer left');
-    final next = answers.removeAt(0);
-    if (next is http.Response) return next;
-    throw next;
-  });
+        seen.add(
+          Seen(
+            request.method,
+            request.url,
+            request.headers,
+            request.body.isEmpty ? null : jsonDecode(request.body),
+          ),
+        );
+        if (answers.isEmpty) throw StateError('no scripted answer left');
+        final next = answers.removeAt(0);
+        if (next is http.Response) return next;
+        throw next;
+      });
 }
 
 http.Response json(
   Object? body, {
   int status = 200,
   Map<String, String> headers = const {},
-}) => http.Response(
-  jsonEncode(body),
-  status,
-  headers: {'content-type': 'application/json', ...headers},
-);
+}) =>
+    http.Response(
+      jsonEncode(body),
+      status,
+      headers: {'content-type': 'application/json', ...headers},
+    );
 
 http.Response page(
   List<Object?> data, {
   String? cursor,
   int limit = 50,
   List<String>? notes,
-}) => json({
-  'data': data,
-  'page': {'nextCursor': cursor, 'limit': limit},
-  if (notes != null) 'meta': {'capabilityNotes': notes},
-});
+}) =>
+    json({
+      'data': data,
+      'page': {'nextCursor': cursor, 'limit': limit},
+      if (notes != null) 'meta': {'capabilityNotes': notes},
+    });
 
 SethuClient clientFor(
   Script script, {
   TokenSource? token,
   int maxRetries = 2,
   List<Duration>? sleeps,
-}) => SethuClient(
-  'https://cms.example.com',
-  token: token ?? () => 'tok_123',
-  httpClient: script.client(),
-  maxRetries: maxRetries,
-  sleep: (d) async => sleeps?.add(d),
-);
+}) =>
+    SethuClient(
+      'https://cms.example.com',
+      token: token ?? () => 'tok_123',
+      httpClient: script.client(),
+      maxRetries: maxRetries,
+      sleep: (d) async => sleeps?.add(d),
+    );
 
 void main() {
   test('list builds the request from the query and reads the page', () async {
@@ -126,7 +130,9 @@ void main() {
     expect(script.seen[1].url.queryParameters.containsKey('filter'), isFalse);
   });
 
-  test('the token is sent in a header, never in the URL, and a token function is asked every time', () async {
+  test(
+      'the token is sent in a header, never in the URL, and a token function is asked every time',
+      () async {
     final script = Script([page([]), page([])]);
     var calls = 0;
     final c = clientFor(
