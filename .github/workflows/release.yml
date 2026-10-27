@@ -1,8 +1,9 @@
 name: Release
 
-# Push a tag such as v0.1.0 to test and create a GitHub release.
-# To publish to pub.dev: remove "publish_to: none" from pubspec.yaml, enable automated publishing
-# for this repository on pub.dev, then uncomment the last step.
+# Push a tag such as v0.1.1 (it must match the version in pubspec.yaml) to test,
+# publish to pub.dev and create a GitHub release.
+# pub.dev trusts this workflow through automated publishing (package Admin tab):
+# repository SethuCMS/sdk-dart, tag pattern v{{version}}. No secrets are stored.
 on:
   push:
     tags: ["v*"]
@@ -21,8 +22,8 @@ jobs:
       - run: dart pub get
       - run: dart analyze --fatal-infos
       - run: dart test
-      - run: dart pub publish --dry-run || true
+      - run: dart pub publish --dry-run
+      - run: dart pub publish --force
       - uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-      # - run: dart pub publish --force
