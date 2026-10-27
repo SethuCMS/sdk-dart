@@ -1,9 +1,9 @@
 name: sethucms
 description: Dart and Flutter client for the SethuCMS API. List, filter and page through records in any connected database.
-version: 0.1.0
-homepage: https://github.com/SethuCMS/sethucms-sdk-dart
-repository: https://github.com/SethuCMS/sethucms-sdk-dart
-issue_tracker: https://github.com/SethuCMS/sethucms-sdk-dart/issues
+version: 0.1.1
+homepage: https://github.com/SethuCMS/sdk-dart
+repository: https://github.com/SethuCMS/sdk-dart
+issue_tracker: https://github.com/SethuCMS/sdk-dart/issues
 topics:
   - cms
   - api-client
